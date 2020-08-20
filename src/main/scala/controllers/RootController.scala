@@ -8,7 +8,7 @@ import io.circe.syntax._
 import service.AccountService
 
 object RootController {
-  val accountService = AccountService()
+  private val accountService: AccountService = AccountService()
 
   def setup(): Unit = {
     this.setupRoot()

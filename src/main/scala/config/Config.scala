@@ -7,6 +7,6 @@ object Config {
 
   def setupConfig(): Unit = {
     port(5000)
-    before((req, res) => res.`type`("text/html"))
+    before((_, res) => res.`type`("text/html"))
   }
 }

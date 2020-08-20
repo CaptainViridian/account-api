@@ -1,6 +1,6 @@
 package controllers
 
-import http.HttpResponse
+import http.HttpResponse._
 import io.circe.generic.semiauto._
 import io.circe.parser._
 import io.circe.syntax._
@@ -25,8 +25,8 @@ case class AccountController(service: AccountService) {
     val accountId = request.queryParams("account_id")
 
     service.checkBalance(accountId) match {
-      case Right(balance) => HttpResponse.ok(balance.asJson)
-      case Left(_) => HttpResponse.notFound()
+      case Right(balance) => ok(balance.asJson)
+      case Left(_) => notFound()
     }
   }
 
@@ -35,22 +35,24 @@ case class AccountController(service: AccountService) {
 
     def withdraw(origin: String, amount: Int): Json =
       service.withdraw(origin, amount) match {
-        case Right(account) => HttpResponse.created(Map("origin" -> account).asJson)
-        case Left(_) => HttpResponse.notFound()
+        case Right(account) => created(Map("origin" -> account).asJson)
+        case Left(_) => notFound()
       }
 
     def deposit(destination: String, amount: Int): Json =
       service.deposit(destination, amount) match {
-        case Right(account) => HttpResponse.created(Map("destination" -> account).asJson)
+        case Right(account) => created(Map("destination" -> account).asJson)
       }
 
     def transfer(origin: String, destination: String, amount: Int): Json =
       service.withdraw(origin, amount) match {
         case Right(originAccount) => service.deposit(destination, amount) match {
           case Right(destinationAccount) =>
-            HttpResponse.created(Map("origin" -> originAccount, "destination" -> destinationAccount).asJson)
+            created(
+              Map("origin" -> originAccount, "destination" -> destinationAccount).asJson
+            )
         }
-        case Left(_) => HttpResponse.notFound()
+        case Left(_) => notFound()
       }
 
     decode(request.body()) match {
@@ -60,7 +62,7 @@ case class AccountController(service: AccountService) {
           case "deposit" => deposit(destination.get, amount)
           case "transfer" => transfer(origin.get, destination.get, amount)
         }
-      case Left(_) => HttpResponse.badRequest()
+      case Left(_) => badRequest()
     }
   }
 }

@@ -27,7 +27,7 @@ case class AccountService() {
       Right(created)
   }
 
-  def transfer(originId: String, destinationId: String, amount: Int) = this.withdraw(originId, amount) match {
+  def transfer(originId: String, destinationId: String, amount: Int): Either[Unit, (Account, Account)] = this.withdraw(originId, amount) match {
     case Right(originAccount) => deposit(destinationId, amount) match {
       case Right(destinationAccount) => Right((originAccount, destinationAccount))
     }
