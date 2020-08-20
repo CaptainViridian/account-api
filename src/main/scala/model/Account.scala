@@ -1,3 +1,3 @@
 package model
 
-case class Account(id: Int, balance: Int)
+case class Account(id: String, balance: Int)
