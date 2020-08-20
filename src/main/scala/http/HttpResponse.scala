@@ -10,6 +10,11 @@ object HttpResponse {
     jsonBody
   }
 
+  def ok()(implicit res: Response): Json = {
+    res.status(200)
+    "".asJson
+  }
+
   def created(jsonBody: Json)(implicit res: Response): Json = {
     res.status(201)
     jsonBody

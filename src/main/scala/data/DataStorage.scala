@@ -10,4 +10,6 @@ case object DataStorage {
   }
 
   def retrieve(id: String): Option[Account] = storage.get(id)
+
+  def reset(): Unit = storage.clear()
 }
