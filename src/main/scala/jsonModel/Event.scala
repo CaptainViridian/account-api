@@ -1,4 +1,4 @@
-package model
+package jsonModel
 
 import io.circe.{Decoder, HCursor}
 

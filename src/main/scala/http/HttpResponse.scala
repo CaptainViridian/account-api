@@ -2,7 +2,6 @@ package http
 
 import io.circe.Json
 import io.circe.syntax._
-
 import spark.Response
 
 object HttpResponse {

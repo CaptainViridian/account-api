@@ -6,7 +6,7 @@ import model.Account
 case class AccountService() {
   private val dao = AccountDao()
 
-  def checkBalance(accountId: String) = dao.getById(accountId) match {
+  def checkBalance(accountId: String): Either[Unit, Int] = dao.getById(accountId) match {
     case Right(Account(_, balance)) => Right(balance)
     case Left(_) => Left(())
   }
@@ -25,5 +25,12 @@ case class AccountService() {
     case Left(_) =>
       val created = dao.createOrUpdate(Account(accountId, balance = amount))
       Right(created)
+  }
+
+  def transfer(originId: String, destinationId: String, amount: Int) = this.withdraw(originId, amount) match {
+    case Right(originAccount) => deposit(destinationId, amount) match {
+      case Right(destinationAccount) => Right((originAccount, destinationAccount))
+    }
+    case Left(_) => Left(())
   }
 }
