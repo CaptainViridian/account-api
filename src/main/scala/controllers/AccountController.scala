@@ -54,11 +54,12 @@ case class AccountController(service: AccountService) {
       }
 
     decode(request.body()) match {
-      case Right(Event(action, amount, Some(origin), Some(destination))) => action match {
-        case "withdraw" => withdraw(origin, amount)
-        case "deposit" => deposit(destination, amount)
-        case "transfer" => transfer(origin, destination, amount)
-      }
+      case Right(Event(action, amount, origin, destination)) =>
+        action match {
+          case "withdraw" => withdraw(origin.get, amount)
+          case "deposit" => deposit(destination.get, amount)
+          case "transfer" => transfer(origin.get, destination.get, amount)
+        }
       case Left(_) => HttpResponse.badRequest()
     }
   }
