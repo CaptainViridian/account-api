@@ -19,7 +19,21 @@ case class AccountController(service: AccountService) {
   private implicit val encoder: Encoder[Account] = deriveEncoder
 
   def setup(): Unit = {
+    get("/balance", handleGetBalance)
     post("/event", handlePostEvent)
+  }
+
+  val handleGetBalance: Route = (request, response) => try {
+    implicit val res: Response = response
+
+    val accountId = request.queryParams("account_id")
+    service.checkBalance(accountId) match {
+      case Right(balance) => HttpResponse.ok(balance.asJson)
+      case Left(_) => HttpResponse.notFound()
+    }
+  } catch {
+    case e => e.printStackTrace(System.out)
+      "".asJson
   }
 
   val handlePostEvent: Route = (request, response) => {
@@ -34,7 +48,7 @@ case class AccountController(service: AccountService) {
           service.deposit(destination.get, amount)
       }) match {
         case Right(responseBody) => HttpResponse.created(responseBody.asJson)
-        case Left(err) => HttpResponse.notFound()
+        case Left(_) => HttpResponse.notFound()
       }
       case Left(_) => HttpResponse.badRequest()
     }
